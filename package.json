@@ -1,0 +1,57 @@
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@reduxjs/toolkit": "^1.9.5",
+    "aws-sdk": "^2.1439.0",
+    "axios": "^1.4.0",
+    "bootstrap": "^5.3.1",
+    "jquery": "^3.7.0",
+    "lodash": "^4.17.21",
+    "popper.js": "^1.16.1",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.8.0",
+    "react-bootstrap-icons": "^1.10.3",
+    "react-bootstrap-pagination-control": "^1.0.5",
+    "react-dom": "^18.2.0",
+    "react-infinite-scroll-component": "^6.1.0",
+    "react-redux": "^8.1.2",
+    "react-router-dom": "6.4",
+    "react-scripts": "5.0.1",
+    "reactstrap": "^9.2.0",
+    "redux": "^4.2.1",
+    "redux-persist": "^6.0.0",
+    "universal-cookie": "^4.0.4",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.197",
+    "@types/react-dom": "^18.2.0",
+    "@types/react-tag-input": "^6.6.1"
+  }
+}

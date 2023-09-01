@@ -1,0 +1,56 @@
+.certificates
+  display: flex
+  flex-flow: row wrap
+  justify-content: center
+  margin: auto
+  min-height: 200px
+
+  .certificate-container
+    margin: 20px
+    width: 250px
+    height: 500px
+    background-color: white
+
+    .image-container
+      width: 250px
+      height: 250px
+      overflow: hidden
+
+  .info-container
+    display: grid
+    padding: 12px
+    grid-template-columns: 170px 50px
+    grid-template-rows: 60px 100px 20px 50px
+    grid-template-areas: "name heart" "description description" "duration duration" "divider divider"
+
+    & p
+      font-size: 9px
+      color: #777
+
+    .name
+      grid-area: name
+
+    .heart
+      grid-area: heart
+      margin: auto
+
+    .description
+      grid-area: description
+      padding: 4px
+
+    .duration
+      grid-area: duration
+
+
+    .divider
+      grid-area: divider
+      display: flex
+      flex-flow: wrap
+      justify-content: space-between
+      align-items: center
+
+      & hr
+        flex: 0 0 100%
+
+      & button
+        height: 30px
