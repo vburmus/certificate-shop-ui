@@ -1,9 +1,9 @@
 import axios from 'axios';
-import {refreshToken} from "./userUtils";
+import {refreshToken, tryLogout} from "./userUtils";
 import {getCookie} from "./cookiesManager";
 
 const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8082'
+    baseURL: 'http://localhost:8080'
 })
 axiosInstance.interceptors.response.use(
     (response) => {
@@ -14,8 +14,12 @@ axiosInstance.interceptors.response.use(
             const originalConfig = error.config
             if (error.response.status === 401 && !originalConfig._retry) {
                 originalConfig._retry = true;
-                if (await refreshToken())
-                    return axiosInstance(originalConfig)
+                if (await refreshToken()) {
+                    const accessToken = getCookie("accessToken")
+                    originalConfig.headers["Authorization"] = `Bearer ${accessToken}`
+                    return await axiosInstance(originalConfig)
+                } else
+                    tryLogout()
             }
         }
         return Promise.reject(error)

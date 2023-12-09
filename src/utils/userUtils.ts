@@ -1,32 +1,40 @@
 import {Token, User} from "./types";
-import {setCookie, getCookie, removeCookie} from './cookiesManager'
+import {getCookie, removeCookie, setCookie} from './cookiesManager'
 import axiosInstance from "./axiosConfig";
 
 const tryLogin = async (email: string, password: string) => {
-    const response = await axiosInstance.post<Token>('/auth/authenticate', {email, password});
-    setCookie("accessToken", response.data.token.accessToken);
-    setCookie("refreshToken", response.data.token.refreshToken);
-    return await getUser(response.data.token.userId)
+    const response = await axiosInstance.post<Token>('/api/v1/auth/authenticate', {email, password});
+    setCookie("accessToken", response.data.accessToken, {maxAge: 24 * 60 * 60 * 2});
+    setCookie("refreshToken", response.data.refreshToken, {maxAge: 24 * 60 * 60 * 2});
+    return await getUser()
+}
+
+const tryActivateAccount = async (token: string) => {
+    return await axiosInstance.post<Token>('/api/v1/auth/activate-account?token=' + token);
 }
 
 
-const getUser = async (id: number) => {
-    const response = await axiosInstance.get('/user/' + id);
-    return response.data;
+const getUserData = async (id: number) => {
+    const response = await axiosInstance.get('/api/v1/users/' + id);
+    return response.data as User;
+}
+const getUser = async () => {
+    const response = await axiosInstance.get('/api/v1/auth/user');
+    return response.data as User
 }
 
 const refreshToken = async () => {
     const refreshToken = getCookie("refreshToken")
     if (!refreshToken) return null
     try {
-        const response = await axiosInstance.post<Token>('/auth/refresh-token', null, {
+        const response = await axiosInstance.post<Token>('/api/v1/auth/refresh-token', null, {
             headers: {
                 'Authorization': `Bearer ${refreshToken}`
             }
         });
         let newAccessToken = response.headers['authorization'] as string
         newAccessToken = newAccessToken.substring(7)
-        setCookie("accessToken", newAccessToken)
+        setCookie("accessToken", newAccessToken, {maxAge: 60 * 60})
         return newAccessToken
     } catch (error) {
         return null;
@@ -34,7 +42,7 @@ const refreshToken = async () => {
 }
 
 const tryRegister = async (formData: FormData) => {
-    return await axiosInstance.post("/auth/register", formData, {
+    return await axiosInstance.post("/api/v1/auth/register", formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
@@ -54,12 +62,31 @@ const getUserFromStorage = () => {
         return JSON.parse(userJSON) as User
     return null;
 }
-const removeAuthCookies = () => {
+const removeCookies = () => {
     removeCookie("accessToken");
     removeCookie("refreshToken");
+    removeCookie("cart")
 }
-const placeOrder = async (order:string) => {
-    const response = await axiosInstance.post("/user/create-order",order)
+const tryLogout = () => {
+    removeUserFromStorage()
+    removeCookies()
+    window.location.reload()
+};
+const placeOrder = async (order: string) => {
+    const response = await axiosInstance.post("/api/v1/commerce/purchases", order)
     return response.data
 }
-export {tryLogin, tryRegister, refreshToken, removeAuthCookies,getUser, setUserInStorage,getUserFromStorage,removeUserFromStorage,placeOrder}
+export {
+    tryLogin,
+    tryRegister,
+    tryLogout,
+    tryActivateAccount,
+    refreshToken,
+    removeCookies,
+    getUser,
+    setUserInStorage,
+    getUserFromStorage,
+    removeUserFromStorage,
+    placeOrder,
+    getUserData
+}
