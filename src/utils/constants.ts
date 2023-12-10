@@ -1,10 +1,12 @@
-export const DATE_ASC = "date";
-export const DATE_DESC = "-date";
+export const DATE_ASC = "createDate";
+export const DATE_DESC = "createDate,desc";
+export const DATE = "date";
 export const DESC = "desc";
 export const ASC = "asc";
 export const NAME_ASC = "name";
-export const NAME_DESC = "-name";
+export const NAME_DESC = "name,desc";
 export const PAGE = 'page';
+export const TOKEN = 'token';
 export const SIZE = 'size';
 export const SORT = 'sort';
 export const WRONG_SORT_DIRECTION = "Wrong sort direction";
@@ -26,3 +28,8 @@ export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_
 export const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Z]{2,}$/i;
 export const NUMBER_REGEX = /^[0-9\-\+]{9,15}$/;
 export const ALLOWED_IMG = ["image/jpg", "image/jpeg", "image/png", "image/gif"];
+export const REGISTRATION_FAILED = 'Registration Failed';
+export const MONTHS = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+];
