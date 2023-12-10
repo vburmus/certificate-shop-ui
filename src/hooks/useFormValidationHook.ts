@@ -1,16 +1,28 @@
 import {useEffect, useState} from 'react';
-import {Tag} from "../../utils/types";
-import {ALLOWED_IMG, LONG_REGEX, OBJECT_NAME_REGEX, SHORT_REGEX} from "../../utils/constants";
+import {Tag} from "../utils/types";
+import {ALLOWED_IMG, LONG_REGEX, OBJECT_NAME_REGEX, SHORT_REGEX} from "../utils/constants";
 
+interface FormValidationOptions {
+    name?: string,
+    price?: number | undefined,
+    shortDescription?: string | undefined,
+    longDescription?: string | undefined,
+    durationDate?: Date | null | string,
+    image?: File | null,
+    tags?: Tag[]
+}
 
-const useFormValidation = (name: string,
-                           price: number | undefined,
-                           shortDescription: string,
-                           longDescription: string,
-                           durationDate: Date | null | string,
-                           image: File | null,
-                           tags: Tag[]
-    ) => {
+const useFormValidation = (options: FormValidationOptions) => {
+        const {
+            name,
+            price,
+            shortDescription,
+            longDescription,
+            durationDate,
+            image,
+            tags,
+        } = options;
+
         const [validName, setValidName] = useState(false);
         const [validPrice, setValidPrice] = useState(false);
         const [validShortDescription, setValidShortDescription] = useState(false)
@@ -20,8 +32,10 @@ const useFormValidation = (name: string,
         const [validTags, setValidTags] = useState(false)
 
         useEffect(() => {
-            const result = OBJECT_NAME_REGEX.test(name);
-            setValidName(result);
+            if (name) {
+                const result = OBJECT_NAME_REGEX.test(name);
+                setValidName(result);
+            }
         }, [name]);
 
         useEffect(() => {
@@ -29,19 +43,24 @@ const useFormValidation = (name: string,
             setValidPrice(result);
         }, [price]);
         useEffect(() => {
-            const result = SHORT_REGEX.test(shortDescription);
-
-            setValidShortDescription(result);
+            if (shortDescription) {
+                const result = SHORT_REGEX.test(shortDescription);
+                setValidShortDescription(result);
+            }
         }, [shortDescription]);
         useEffect(() => {
-            const result = LONG_REGEX.test(longDescription);
-            setValidLongDescription(result);
+            if (longDescription) {
+                const result = LONG_REGEX.test(longDescription);
+                setValidLongDescription(result);
+            }
         }, [longDescription]);
         useEffect(() => {
             setValidDate((durationDate != null) && (durationDate !== ""));
         }, [durationDate]);
         useEffect(() => {
-            setValidTags(tags.length > 0 && tags.length <= 6);
+            if (tags) {
+                setValidTags(tags.length > 0 && tags.length <= 6);
+            }
         }, [tags]);
 
         useEffect(() => {

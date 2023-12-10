@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import {getCertificateById} from "../../utils/certificateUtils";
+import {getCertificateById} from "../utils/certificateUtils";
 import {isAxiosError} from "axios";
-import {Certificate} from "../../utils/types";
+import {Certificate} from "../utils/types";
 
 const useGetCertificate = (certificateId:number|null) => {
     const [certificate, setCertificate] = useState<Certificate|null>(null);
