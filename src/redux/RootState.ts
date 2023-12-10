@@ -6,10 +6,6 @@ interface RootState {
         user: User | null;
         error: string | null;
     },
-    page: {
-        currentPage:number,
-        loading:boolean
-    },
     filter: {
         loading: boolean;
         error: string | null;
