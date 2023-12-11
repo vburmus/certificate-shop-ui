@@ -3,9 +3,9 @@ import '../../styles/css/Header.css'
 import '../../styles/css/index.css'
 import {Button, Input, Nav, Navbar} from 'reactstrap';
 import {Image, NavDropdown} from "react-bootstrap";
-import {BoxArrowRight, ChevronLeft, List} from "react-bootstrap-icons";
+import {BoxArrowRight, Cart, ChevronLeft, List} from "react-bootstrap-icons";
 import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
-import {getUserFromStorage, removeAuthCookies, removeUserFromStorage} from "../../utils/userUtils";
+import {getUserFromStorage, tryLogout} from "../../utils/userUtils";
 import {useDispatch, useSelector} from "react-redux";
 import RootState from "../../redux/RootState";
 import _ from "lodash";
@@ -37,8 +37,7 @@ const Header = () => {
         const inputRef = useRef<HTMLInputElement | null>(null);
 
         const handleLogout = () => {
-            removeUserFromStorage()
-            removeAuthCookies()
+            tryLogout()
             navigate("/")
         };
 
@@ -113,16 +112,21 @@ const Header = () => {
         useEffect(() => {
             !isAdmin && handleUserFilter()
         }, [search]);
+        const goBack = (style: string) => <ChevronLeft className={style} size={20} onClick={() => navigate(-1)}/>
+
         return (
             <header>
-                <Navbar color="light"
-                        className="d-flex justify-content-between border-bottom border-gray bg-white">
-                    <div className="col-1 align-content-center">
-                        <div className="image-container m-auto d-none d-lg-block" onClick={handleLogoClick}>
-                            <Image src="/logo.png" className="scaled-image "/>
-                        </div>
+                <Navbar
+                    className="d-flex justify-content-between border-bottom border-gray bg-white gap-5 shadow">
+                    <div className="align-content-center">
+                        {location.pathname.includes("/control-panel/") ?
+                            goBack("")
+                            :
+                            <div className="image-container m-auto d-none d-lg-block" onClick={handleLogoClick}>
+                                <Image src="/logo2.png" className="scaled-image "/>
+                            </div>}
                         {location.pathname.includes("/certificate/") ?
-                            <ChevronLeft className="d-lg-none" size={20} onClick={() => navigate(-1)}/> :
+                            goBack("d-lg-none") :
                             <NavDropdown title={<List size={24}/>} className="d-lg-none" id="basic-nav-dropdown">
                                 <NavDropdown.Item href='/'>
                                     <span>Home</span>
@@ -139,7 +143,8 @@ const Header = () => {
                                 )}
                             </NavDropdown>}
                     </div>
-                    <div className={location.pathname === "/" ? "d-flex col-6" : "d-none"}>
+                    <div
+                        className={location.pathname === "/" || location.pathname.includes("/control-panel/certificates") ? "d-flex w-50 " : "d-none"}>
                         <Input
                             type="search"
                             placeholder="Search"
@@ -148,36 +153,49 @@ const Header = () => {
                             aria-label="Search"
                             onChange={handleInputChange}
                         />
-                        {isAdmin && <Button
-                            className="btn btn-light border-1 border-secondary-subtle"
-                            onClick={handleAdminFilter}>Search</Button>}
+                        {isAdmin &&
+                            <Button
+                                className="btn btn-light border-1 border-secondary-subtle shadow"
+                                onClick={handleAdminFilter}>Search</Button>
+                        }
                         {isFiltered ? <Button
-                                className={(filterState.tags.length || filterState.input) ? "btn btn-light border-1 border-secondary-subtle" : "d-none"}
+                                className={(filterState.tags.length || filterState.input) ? "btn btn-info border-1 border-secondary-subtle shadow" : "d-none"}
                                 onClick={handleClear}>Clear</Button> :
                             <Button
-                                className={(sortParams.length > 0) ? "btn btn-light border-1 border-secondary-subtle col-2" : "d-none"}
+                                className={(sortParams.length > 0) ? "btn btn-light border-1 border-secondary-subtle shadow" : "d-none"}
                                 onClick={handleClearSort}>Disable sort</Button>}
                     </div>
-                    <div className="d-flex justify-content-around align-items-center col-2 col-md-4 ">
+                    <div className="d-flex justify-content-around align-items-center ">
                         {isAdmin &&
-                            <NavDropdown title="Add new" id="basic-nav-dropdown">
-                                <div className="d-flex flex-column px-2">
-                                    <Link to="/create-certificate"
-                                          className="btn btn-light border-1 border-dark">Certificate</Link>
-                                    <br/>
-                                    <Link to="/create-tag" className="btn btn-light border-1 border-dark">Tag</Link>
-                                </div>
-                            </NavDropdown>
+                            <>
+                                {location.pathname.includes("/control-panel") ?
+                                    <Button
+                                        className="btn btn-light border-1 border-secondary-subtle shadow m-2"
+                                        onClick={() => navigate("/")}>User</Button>
+                                    :
+                                    <Button
+                                        className="btn btn-light border-1 border-secondary-subtle shadow m-2"
+                                        onClick={() => navigate("/control-panel")}>Admin</Button>}
+                                <Button outline={true} className="text-white p-0 btn-info border-secondary-subtle shadow">
+                                    <NavDropdown title="Add new" id="basic-nav-dropdown">
+                                        <div className="d-flex flex-column px-2">
+                                            <Link to="/create-certificate"
+                                                  className="btn btn-light border-1 border-dark">Certificate</Link>
+                                            <br/>
+                                            <Link to="/create-tag" className="btn btn-light border-1 border-dark">Tag</Link>
+                                        </div>
+                                    </NavDropdown>
+                                </Button>
+                            </>
                         }
+                        {!isAdmin && <Cart size={24} onClick={() => navigate("/checkout")}>
+                        </Cart>}
                         {user ?
                             (
                                 <Nav className="align-items-center">
-                                    <Link to="/profile" className="d-flex align-items-center justify-content-between">
-                                        <div className="image-container mx-1">
-                                            <Image src={user.imageURL}
-                                                   className="rounded-circle scaled-image"/>
-                                        </div>
-                                        <span className="d-none d-lg-block">{user.name}</span>
+                                    <Link to={"/profile/" + user.id}
+                                          className="d-flex align-items-center justify-content-between btn btn-info p-2 text-white shadow">
+                                        <span className="d-none d-lg-block">{user.email}</span>
                                     </Link>
 
                                     <BoxArrowRight className="d-none d-md-block pe-auto " to="/" onClick={handleLogout}
