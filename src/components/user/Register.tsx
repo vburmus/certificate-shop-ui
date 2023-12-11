@@ -1,11 +1,11 @@
 import React, {FormEvent, useEffect, useRef, useState} from 'react';
 import {Button, Form, Input, Label} from "reactstrap";
-import 'styles/css/Register.css'
+import '../../styles/css/Register.css'
 import _ from "lodash";
 import {Link} from "react-router-dom";
 import {isAxiosError} from "axios";
-import {tryRegister} from "../utils/userUtils";
-import Loader from "./common/Loader";
+import {tryRegister} from "../../utils/userUtils";
+import Loader from "../common/Loader";
 import {
     ALLOWED_IMG,
     CHECK_THE_FORM,
@@ -13,8 +13,10 @@ import {
     NAME_SURNAME_REGEX,
     NO_SERVER_RESPONSE,
     NUMBER_REGEX,
-    PASSWORD_REGEX
-} from "../utils/constants";
+    PASSWORD_REGEX,
+    REGISTRATION_FAILED
+} from "../../utils/constants";
+import {toast} from "react-toastify";
 
 const Register = () => {
     const errRef = useRef<HTMLParagraphElement>(null);
@@ -39,7 +41,7 @@ const Register = () => {
     const [validEmail, setValidEmail] = useState(false);
     const [emailFocus, setEmailFocus] = useState(false);
 
-    const [number, setNumber] = useState('');
+    const [phone, setPhone] = useState('');
     const [validNumber, setValidNumber] = useState(false);
     const [numberFocus, setNumberFocus] = useState(false);
 
@@ -74,9 +76,9 @@ const Register = () => {
     }, [email])
 
     useEffect(() => {
-        const result = NUMBER_REGEX.test(number);
+        const result = NUMBER_REGEX.test(phone);
         setValidNumber(result);
-    }, [number])
+    }, [phone])
 
     useEffect(() => {
         if (image) {
@@ -90,7 +92,7 @@ const Register = () => {
 
     useEffect(() => {
         setError('')
-    }, [name, surname, password, matchPassword, email, number]);
+    }, [name, surname, password, matchPassword, email, phone]);
 
     const handleInputChange = _.debounce((value: any, callback: React.Dispatch<React.SetStateAction<any>>) => {
         callback(value)
@@ -101,9 +103,10 @@ const Register = () => {
         e.preventDefault();
         const v1 = NAME_SURNAME_REGEX.test(name) && NAME_SURNAME_REGEX.test(surname);
         const v2 = PASSWORD_REGEX.test(password);
-        const v3 = EMAIL_REGEX.test(email) && NUMBER_REGEX.test(number);
+        const v3 = EMAIL_REGEX.test(email) && NUMBER_REGEX.test(phone);
         if (!(v1 && v2 && v3)) {
             setError(CHECK_THE_FORM)
+            toast.info(CHECK_THE_FORM)
             return;
         }
         setIsLoading(true)
@@ -114,7 +117,7 @@ const Register = () => {
                 surname,
                 email,
                 password,
-                number
+                phone
             }
             const blob = new Blob([JSON.stringify(request)], {type: 'application/json'});
             formData.append("request", blob);
@@ -127,10 +130,13 @@ const Register = () => {
             if (isAxiosError(err)) {
                 if (!err?.response) {
                     setError(NO_SERVER_RESPONSE)
+                    toast.info(NO_SERVER_RESPONSE)
                 } else if (err.response?.status === 409) {
                     setError(err.response.data.detail)
+                    toast.info(error)
                 } else {
-                    setError('Registration Failed')
+                    setError(REGISTRATION_FAILED)
+                    toast.info(REGISTRATION_FAILED)
                 }
             }
         } finally {
@@ -142,11 +148,11 @@ const Register = () => {
         <Loader/> : <>
             {success ?
                 <section>
-                    <div className="alert alert-success">
+                    <div className="alert alert-info">
                         <h1 className="alert-heading">Registration completed!</h1>
                         <hr/>
-                        <p>Thank you for registration on our service, now you can Sign In</p>
-                        <Link className="btn btn-success w-100" to="../login">Sign in</Link>
+                        <p>Thank you for registration on our service, click the activation link on your email!</p>
+                        <Link className="btn btn-info w-25" to="/">Home</Link>
                     </div>
                 </section> :
                 <section className="register col-md-7 col-lg-5">
@@ -163,7 +169,7 @@ const Register = () => {
                                     type="text"
                                     placeholder="Enter name"
                                     aria-label="Name"
-                                    className={!name || (name && !validName) ? "border-warning-subtle shadow-none" : "border-info"}
+                                    className={!name || (name && !validName) ? "border-danger-subtle shadow-none" : "border-info"}
                                     autoComplete="off"
                                     required
                                     onChange={e => {
@@ -182,7 +188,7 @@ const Register = () => {
                                     id="surnameInput"
                                     type="text"
                                     placeholder="Enter surname"
-                                    className={!surname || (surname && !validSurname) ? "border-warning-subtle shadow-none" : "border-info"}
+                                    className={!surname || (surname && !validSurname) ? "border-danger-subtle shadow-none" : "border-info"}
                                     autoComplete="off"
                                     onChange={(e) => handleInputChange(e.target.value, setSurname)}
                                     onFocus={() => setSurnameFocus(true)}
@@ -199,7 +205,7 @@ const Register = () => {
                                     id="passwordInput"
                                     type="password"
                                     placeholder="Enter password"
-                                    className={!password || (password && !validPassword) ? "border-warning-subtle shadow-none" : "border-info"}
+                                    className={!password || (password && !validPassword) ? "border-danger-subtle shadow-none" : "border-info"}
                                     autoComplete="off"
                                     onChange={(e) => handleInputChange(e.target.value, setPassword)}
                                     onFocus={() => setPasswordFocus(true)}
@@ -216,7 +222,7 @@ const Register = () => {
                                     id="matchPasswordInput"
                                     type="password"
                                     placeholder="Repeat password"
-                                    className={!matchPassword || (matchPassword && !validMatchPassword) ? "border-warning-subtle shadow-none" : "border-info"}
+                                    className={!matchPassword || (matchPassword && !validMatchPassword) ? "border-danger-subtle shadow-none" : "border-info"}
                                     autoComplete="off"
                                     onChange={(e) => handleInputChange(e.target.value, setMatchPassword)}
                                     onFocus={() => setMatchPasswordFocus(true)}
@@ -233,7 +239,7 @@ const Register = () => {
                                     id="emailInput"
                                     type="text"
                                     placeholder="Enter email"
-                                    className={!email || (email && !validEmail) ? "border-warning-subtle shadow-none" : "border-info"}
+                                    className={!email || (email && !validEmail) ? "border-danger-subtle shadow-none" : "border-info"}
                                     autoComplete="off"
                                     onChange={(e) => handleInputChange(e.target.value, setEmail)}
                                     onFocus={() => setEmailFocus(true)}
@@ -250,14 +256,14 @@ const Register = () => {
                                     id="numberInput"
                                     type="text"
                                     placeholder="Enter number"
-                                    className={!number || (number && !validNumber) ? "border-warning-subtle shadow-none" : "border-info"}
+                                    className={!phone || (phone && !validNumber) ? "border-danger-subtle shadow-none" : "border-info"}
                                     autoComplete="off"
-                                    onChange={(e) => handleInputChange(e.target.value, setNumber)}
+                                    onChange={(e) => handleInputChange(e.target.value, setPhone)}
                                     onFocus={() => setNumberFocus(true)}
                                     onBlur={() => setNumberFocus(false)}
                                 />
                                 <span
-                                    className={numberFocus && number && !validNumber ? "custom-invalid " : "d-none"}>
+                                    className={numberFocus && phone && !validNumber ? "custom-invalid " : "d-none"}>
                                         Number is not valid
                                         </span>
                             </div>
@@ -276,11 +282,12 @@ const Register = () => {
                                         </span>
                             </div>
                         </div>
-                        <p ref={errRef} className={error ? "alert alert-warning " : "d-none"}>{error}</p>
+
                         <Button
                             disabled={!validName || !validSurname || !validPassword || !validEmail || !validNumber || !validImage}
-                            className="btn btn-success w-50 m-3">Sign Up</Button>
+                            className="btn btn-info w-50 m-3">Sign Up</Button>
                     </Form>
+
                 </section>
             }
         </>

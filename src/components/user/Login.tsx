@@ -2,11 +2,11 @@ import React, {useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import {Button, Form} from "reactstrap";
 import {FormControl, Image} from "react-bootstrap";
-import 'styles/css/Login.css'
+import '../../styles/css/Login.css'
 import axios from "axios";
-import {setUserInStorage, tryLogin} from "../utils/userUtils";
-import Loader from "./common/Loader";
-import {CHECK_THE_FORM} from "../utils/constants";
+import {setUserInStorage, tryLogin} from "../../utils/userUtils";
+import Loader from "../common/Loader";
+import {CHECK_THE_FORM} from "../../utils/constants";
 
 const Login = () => {
     const navigate = useNavigate();
@@ -18,6 +18,8 @@ const Login = () => {
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         if (!(email && password)) {
             setError(CHECK_THE_FORM)
+        } else {
+            setError("")
         }
         e.preventDefault()
         setIsLoading(true)
@@ -62,7 +64,7 @@ const Login = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                        <Button className="btn btn-success" type="submit" disabled={!(email && password)}>Login</Button>
+                        <Button className="btn btn-info" type="submit" disabled={!(email && password)}>Login</Button>
                     </Form>
                 </>
             }
