@@ -19,8 +19,6 @@ import {
 import {toast} from "react-toastify";
 
 const Register = () => {
-    const errRef = useRef<HTMLParagraphElement>(null);
-
     const [name, setName] = useState('');
     const [validName, setValidName] = useState(false);
     const [nameFocus, setNameFocus] = useState(false);
