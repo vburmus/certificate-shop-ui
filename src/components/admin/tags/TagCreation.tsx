@@ -1,11 +1,11 @@
 import React, {FormEvent, useEffect, useState} from 'react';
-import Loader from "../common/Loader";
+import Loader from "../../common/Loader";
 import {Button, Form, Input} from "reactstrap";
 import _ from "lodash";
 import {useNavigate} from "react-router-dom";
 import {isAxiosError} from "axios";
-import {createTag} from "../../utils/tagUtils";
-import {ALLOWED_IMG, CHECK_THE_FORM, NO_SERVER_RESPONSE, OBJECT_NAME_REGEX} from "../../utils/constants";
+import {createTag} from "../../../utils/tagUtils";
+import {ALLOWED_IMG, CHECK_THE_FORM, NO_SERVER_RESPONSE, OBJECT_NAME_REGEX} from "../../../utils/constants";
 
 
 const TagCreation = () => {
@@ -58,7 +58,7 @@ const TagCreation = () => {
                 formData.append("image", image);
             }
             await createTag(formData);
-            navigate(`/tags`)
+            navigate(`/control-panel/tags`)
         } catch (err) {
             if (isAxiosError(err)) {
                 if (!err?.response) {

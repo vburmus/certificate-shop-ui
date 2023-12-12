@@ -1,5 +1,5 @@
 import React from 'react';
-import {Tag} from "../utils/types";
+import {Tag} from "../../utils/types";
 import TagCard from "./TagCard";
 
 interface TagListProps{
