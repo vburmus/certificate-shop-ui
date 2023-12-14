@@ -5,20 +5,29 @@
   margin: auto
   min-height: 200px
 
+
   .certificate-container
+    border-radius: 20px
     margin: 20px
     width: 250px
     height: 500px
-    background-color: white
+    background-color: #f0f0f0
+
+    &:hover
+      transform: scale(1.10)
+      transition: all 0.3s
+
 
     .image-container
       width: 250px
       height: 250px
       overflow: hidden
+      border-top-left-radius: 20px
+      border-top-right-radius: 20px
 
   .info-container
     display: grid
-    padding: 12px
+    margin-left: 16px
     grid-template-columns: 170px 50px
     grid-template-rows: 60px 100px 20px 50px
     grid-template-areas: "name heart" "description description" "duration duration" "divider divider"
@@ -54,3 +63,6 @@
 
       & button
         height: 30px
+
+.expired
+  filter: brightness(80%)
