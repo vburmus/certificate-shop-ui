@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
-import {Certificate} from '../../utils/types';
+import {Certificate} from '../../../utils/types';
 import {Button} from "reactstrap";
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import EditingModal from "./EditingModal";
-import ConfirmationModal from "./ConfirmationModal";
-import {deleteCertificate} from "../../utils/certificateUtils";
+import CertificateEditingModal from "./CertificateEditingModal";
+import ConfirmationModal from "../../common/ConfirmationModal";
+import {deleteCertificate} from "../../../utils/certificateUtils";
 import {CaretDownFill, CaretLeft, CaretUpFill} from "react-bootstrap-icons";
 import {useSelector} from "react-redux";
-import RootState from "../../redux/RootState";
+import RootState from "../../../redux/RootState";
 
 interface CertificatesTableProps {
     certificates: Certificate[],
@@ -57,7 +57,7 @@ const CertificatesTable: React.FC<CertificatesTableProps> = ({certificates}) => 
             <>
                 <table className="table">
                     <thead>
-                    <tr>
+                    <tr className="text-center">
                         <th scope="col">Date/Time
                             {!isFiltered && (sortParams.length < 1 || sortParams[0].startsWith("name") ?
                                 <CaretLeft
@@ -83,13 +83,13 @@ const CertificatesTable: React.FC<CertificatesTableProps> = ({certificates}) => 
                     </thead>
                     <tbody>
                     {certificates.map((certificate) => (
-                        <tr key={certificate.id}>
+                        <tr key={certificate.id} className="text-center align-content-center">
                             <td>{certificate.createDate.replace("T", " ")} </td>
                             <td>{certificate.name}</td>
                             <td>{certificate.tags.map(t => t.name).join(', ')}</td>
                             <td>{certificate.shortDescription}</td>
-                            <td>{certificate.price}</td>
-                            <td className="">
+                            <td>{certificate.price}$</td>
+                            <td>
                                 <Link className="btn btn-info text-dark" to={`/certificate/${certificate.id}`}>View</Link>
                                 <Button className="btn btn-warning" onClick={() => {
                                     setIsEditing(true);
@@ -104,7 +104,8 @@ const CertificatesTable: React.FC<CertificatesTableProps> = ({certificates}) => 
                     ))}
                     </tbody>
                 </table>
-                {isEditing && editingCertificate && <EditingModal closeModal={setIsEditing} certificate={editingCertificate}/>}
+                {isEditing && editingCertificate &&
+                    <CertificateEditingModal closeModal={setIsEditing} certificate={editingCertificate}/>}
                 {isDeleting && deletingCertificate && <ConfirmationModal closeModal={setIsDeleting} action={() => {
                     deleteCertificate(deletingCertificate.id);
                     window.location.reload()

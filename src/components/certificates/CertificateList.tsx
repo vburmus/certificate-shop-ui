@@ -1,5 +1,5 @@
 import CertificateCard from "./CertificateCard";
-import {Certificate} from "../utils/types";
+import {Certificate} from "../../utils/types";
 import React from "react";
 
 interface CertificateListProps {
