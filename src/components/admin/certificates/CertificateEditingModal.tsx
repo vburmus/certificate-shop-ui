@@ -1,22 +1,23 @@
 import React, {FormEvent, useEffect, useState} from 'react';
 import {Button, Form, Input} from "reactstrap";
-import "./../../styles/css/Modal.css"
-import {Certificate, Tag} from "../../utils/types";
+import "../../../styles/css/Modal.css"
+import "../../../styles/css/EditingModal.css"
+import {Certificate, Tag} from "../../../utils/types";
 import _, {toString} from "lodash";
-import TagInput from "./TagInput";
+import TagInput from "../tags/TagInput";
 import {Image} from "react-bootstrap";
 import {isAxiosError} from "axios";
-import {updateCertificate} from "../../utils/certificateUtils";
+import {updateCertificate} from "../../../utils/certificateUtils";
 import {useNavigate} from "react-router-dom";
-import Loader from "../common/Loader";
-import useFormValidation from "../hooks/useFormValidationHook";
+import Loader from "../../common/Loader";
+import useFormValidation from "../../../hooks/useFormValidationHook";
 
 interface ModalProps {
     closeModal: React.Dispatch<React.SetStateAction<boolean>>,
     certificate: Certificate
 }
 
-const EditingModal: React.FC<ModalProps> = ({closeModal, certificate}) => {
+const CertificateEditingModal: React.FC<ModalProps> = ({closeModal, certificate}) => {
     const [name, setName] = useState("")
     const [price, setPrice] = useState<number>()
     const [shortDescription, setShortDescription] = useState("")
@@ -27,7 +28,15 @@ const EditingModal: React.FC<ModalProps> = ({closeModal, certificate}) => {
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
-    const {validName, validPrice, validShortDescription, validLongDescription, validDate, validImage, validTags} = useFormValidation(name, price, shortDescription, longDescription, durationDate, image, tags)
+    const {
+        validName,
+        validPrice,
+        validShortDescription,
+        validLongDescription,
+        validDate,
+        validImage,
+        validTags
+    } = useFormValidation({name, price, shortDescription, longDescription, durationDate, image, tags})
 
 
     useEffect(() => {
@@ -138,8 +147,8 @@ const EditingModal: React.FC<ModalProps> = ({closeModal, certificate}) => {
                         <hr className="col-12"/>
                         <div className="form-group  d-flex justify-content-around">
                             <div className="col-3">
-                                <div className={"image-container"}>
-                                    <Image src={certificate.imageURL} className="scaled-image"/>
+                                <div className="image-container-100">
+                                    <Image src={certificate.imageUrl} className="scaled-image"/>
                                 </div>
                                 <Input type="file" onChange={(e) => {
                                     if (e.target.files) handleInputChange(e.target.files[0], setImage)
@@ -180,4 +189,4 @@ const EditingModal: React.FC<ModalProps> = ({closeModal, certificate}) => {
     );
 };
 
-export default EditingModal;
+export default CertificateEditingModal;
