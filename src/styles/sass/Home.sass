@@ -1,42 +1,76 @@
-.infinite-scroll-component__outerdiv
+.certificates
   width: 80%
 
+  a, a:visited, svg
+    text-decoration: none
+    margin: 8px
+    color: #212770
+    cursor: pointer
+
+    &:hover, svg:hover
+      color: #1ca7f7
 
 .tags
   width: 100%
-  background-color: lightgray
+  background-color: #5ebdfd
   color: black
   text-align: center
-  padding-top: 12px
   min-height: 20vh
   display: flex
-  justify-content: center
   align-items: center
   align-self: start
+  justify-content: space-around
 
   &-container
     width: 80%
+    min-height: 20vh
     display: flex
     flex-flow: row wrap
+    align-items: center
     justify-content: space-around
 
+  a, a:visited, svg
+    text-decoration: none
+    color: #f0f0f0
+    cursor: pointer
 
   .tag-container
     cursor: pointer
-    align-self: center
+    width: 120px
+    height: 120px
+
+    .name-container
+      display: none
+      position: sticky
+      margin-top: -4.5rem
+      text-align: center
+      z-index: 2
 
     .image-container
-      width: 70px
-      height: 70px
+      width: 120px
+      height: 120px
       overflow: hidden
 
-.chosen
-  color: black
-  font-weight: 700
-  text-decoration: underline
+    &:hover
+      .name-container
+        display: block
 
-.arrow
-  &-right
-    right: 10%
-  &-left
-    left: 10%
+      .image-container
+        transform: scale(1.10)
+        transition: all 0.3s
+        -webkit-filter: brightness(60%)
+
+.chosen
+  .name-container
+    display: block !important
+
+  .image-container
+    filter: brightness(60%) !important
+
+.arrow-right
+  position: absolute
+  right: 10%
+
+.arrow-left
+  position: absolute
+  left: 10%
