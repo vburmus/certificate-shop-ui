@@ -1,14 +1,14 @@
 import React, {FormEvent, useState} from 'react';
-import Loader from "../common/Loader";
+import Loader from "../../common/Loader";
 import {Button, Form, Input} from "reactstrap";
 import _, {toString} from "lodash";
-import TagInput from "./TagInput";
-import {Tag} from "../../utils/types";
+import TagInput from "../tags/TagInput";
+import {Tag} from "../../../utils/types";
 import {useNavigate} from "react-router-dom";
-import {createCertificate} from "../../utils/certificateUtils";
+import {createCertificate} from "../../../utils/certificateUtils";
 import {isAxiosError} from "axios";
-import useFormValidation from "../hooks/useFormValidationHook";
-import {CHECK_THE_FORM, NO_SERVER_RESPONSE, UPDATE_FAILED} from "../../utils/constants";
+import useFormValidation from "../../../hooks/useFormValidationHook";
+import {CHECK_THE_FORM, NO_SERVER_RESPONSE, UPDATE_FAILED} from "../../../utils/constants";
 
 const CertificateCreation = () => {
     const [name, setName] = useState("")
@@ -21,7 +21,15 @@ const CertificateCreation = () => {
     const [error, setError] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
-    const {validName, validPrice, validShortDescription, validLongDescription, validDate, validImage, validateForm} = useFormValidation(name, price, shortDescription, longDescription, durationDate, image, tags)
+    const {
+        validName,
+        validPrice,
+        validShortDescription,
+        validLongDescription,
+        validDate,
+        validImage,
+        validateForm
+    } = useFormValidation({name, price, shortDescription, longDescription, durationDate, image, tags})
 
     const handleInputChange = _.debounce((value: any, callback: React.Dispatch<React.SetStateAction<any>>) => {
         callback(value)
@@ -103,7 +111,8 @@ const CertificateCreation = () => {
                             <Input type="text"
                                    className={!validShortDescription ? "border-warning-subtle shadow-none" : "border-info"}
                                    onChange={e => (handleInputChange(e.target.value, setShortDescription))}/>
-                            {shortDescription && !validShortDescription && <span className="custom-invalid">10 to 50 character</span>}
+                            {shortDescription && !validShortDescription &&
+                                <span className="custom-invalid">10 to 50 character</span>}
                         </div>
                         <div className="col-5">
                             <span>Image</span>
@@ -124,7 +133,8 @@ const CertificateCreation = () => {
                                className={!validLongDescription ? "border-warning-subtle shadow-none" : "border-info"}
                                style={{minHeight: "150px", maxHeight: "200px"}}
                                onChange={e => (handleInputChange(e.target.value, setLongDescription))}/>
-                        {longDescription && !validLongDescription && <span className="custom-invalid">100 to 600 characters</span>}
+                        {longDescription && !validLongDescription &&
+                            <span className="custom-invalid">100 to 600 characters</span>}
                     </div>
                     <hr className="col-12"/>
                     {error && <h5 className="alert alert-warning">{error}</h5>}
